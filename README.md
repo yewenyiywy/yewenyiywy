@@ -1,6 +1,6 @@
 ## Hi, I'm Wenyi 👋
 
-MFE candidate at **UC Berkeley Haas** · B.S. from the **University of Michigan**.
+MFE candidate at **UC Berkeley Haas** · B.S. from the **University of Michigan, Ann Arbor**.
 I work on quantitative trading, risk, and machine learning for markets.
 
 <picture>
