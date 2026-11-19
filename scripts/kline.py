@@ -4,7 +4,7 @@
 "价格" = 最近 7 天的贡献数（滚动求和）
 每根 K 线 = 一周：开盘 = 周一的价格，收盘 = 周日的价格，最高/最低 = 这一周里的最高/最低
 成交量 = 这一周的贡献总数
-均线 = 最近 4 根 K 线收盘价的平均
+均线 = 最近 MA_WINDOW（7）根 K 线收盘价的平均
 
 用法：
   GITHUB_TOKEN=... python kline.py --user yewenyiywy --out dist
@@ -20,6 +20,7 @@ import urllib.request
 from html import escape
 
 TICKER = "WENYI"
+MA_WINDOW = 7         # 均线用最近几根 K 线（7 是幸运数字）
 
 THEMES = {
     "light": dict(bg="#ffffff", border="#d0d7de", text="#1f2328", muted="#656d76", grid="#eaeef2",
@@ -75,7 +76,7 @@ def to_candles(days: list[tuple[str, int]]) -> list[dict]:
         candles.append(dict(date=days[i][0], o=week[0], c=week[-1], h=max(week), l=min(week),
                             v=sum(counts[i:i + 7])))
     for i, k in enumerate(candles):
-        window = candles[max(0, i - 3):i + 1]
+        window = candles[max(0, i - MA_WINDOW + 1):i + 1]
         k["ma"] = sum(x["c"] for x in window) / len(window)
     return candles[-52:]
 
@@ -180,7 +181,7 @@ def render(candles: list[dict], theme: str, animate: bool = True) -> str:
     macls = ' class="ma" pathLength="1"' if animate else ""
     out.append(f'<polyline{macls} points="{pts}" fill="none" stroke="{t["ma"]}" stroke-width="1.6" '
                f'stroke-linejoin="round" stroke-linecap="round"/>')
-    out.append(f'<text x="{PAD_L}" y="{PAD_T - 6}" font-size="10" fill="{t["ma"]}">MA4</text>')
+    out.append(f'<text x="{PAD_L}" y="{PAD_T - 6}" font-size="10" fill="{t["ma"]}">MA{MA_WINDOW}</text>')
 
     # ---- 最新价标签
     tagcls = ' class="tag"' if animate else ""
